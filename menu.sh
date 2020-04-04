@@ -1,4 +1,5 @@
 #!/bin/bash
+
 ############################################################
 #   0) DESINSTALATU 
 ############################################################
@@ -249,6 +250,7 @@ sudo ./webprocess.sh english.doc.txt
 #############################################################
 function appaBistaratu()
 {
+cd /var/www/html/erraztest
 echo "#################### appaBistaratu funtzioa"
 firefox http://127.0.0.1:8080/index.php
 }
@@ -280,7 +282,27 @@ else
 	sudo aptitude install ssh
 fi
 
-less /var/log/auth.log | grep 'Failed.*sshd'
+echo "SSH bidezko konexio saiakerak azken hilabetean ondokoak izan dira:"
+cd /home/fitxategiak
+less /var/log/auth.log | grep 'lsi' > loginak.txt
+nf=`less /var/log/auth.log | grep 'lsi' | wc -l`
+i=1
+while read line; do
+	
+	
+	data=`echo "$line" loginak.txt | awk '{print $1,$2,$3}'`
+	name=`echo "$line" loginak.txt| awk '{print $4}'`
+	statu=`echo "$line" loginak.txt | awk '{print $6}'`
+	baldintza=`echo $status | grep "Accepted"`
+	if [ -z $baldintza];
+	then
+		echo "Status: [failed]  Account name: $name Date: $data"
+	else
+		echo "Status: [failed]  Account name: $name Date: $data"
+	fi
+
+	i=$((i+1))
+done < loginak.txt
 }
 
 ###########################################################
