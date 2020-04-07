@@ -311,15 +311,7 @@ done < loginak.txt
 
 function irten()
 {
-
-	echo -e "Programatik atera nahi duzu(B/E)\n"
-        read erantzuna
-	
-	if [ $erantzuna == 'E' ]
-
-      		then
-              		menukoaukera=0
-                fi
+	dialog --msgbox "Agur\n:)" 6 12
 }
 
 
@@ -328,44 +320,51 @@ function irten()
 ############
 
 # hasieraketa balioa
-aukera=13
+function main()
+{
+	exec 3>&1
 
-while [ $aukera -ne 12 ]
-do
-	aukera="$(dialog --title "Web-zerbitzaria" \
-		--menu "\n Aukeratu ekintza" 20 70 20 \
-		0 "Desinstalatu dena" \
-		1 "Instalatu apache" \
-		2 "Apache testeatu" \
-		3 "VirtualHost-a sortu" \
-		4 "VirtualHost-a testeatu" \
-		5 "PHP instalatu" \
-		6 "PHP testeatu" \
-		7 "Py3VENV sortu" \
-		8 "APP-a instalatu" \
-		9 "APP-a bistaratu" \
-		10 "Apache log-ak" \
-		11 "SSH log-ak" \
-		12 "Irten" \
-		2>&1 1>&3)"
+	aukera=13
+	
+	while [ $aukera -ne 12 ]
+	do
+		aukera="$(dialog --title "Web-zerbitzaria" \
+			--menu "\n Aukeratu ekintza" 20 70 20 \
+			0 "Desinstalatu dena" \
+			1 "Instalatu apache" \
+			2 "Apache testeatu" \
+			3 "VirtualHost-a sortu" \
+			4 "VirtualHost-a testeatu" \
+			5 "PHP instalatu" \
+			6 "PHP testeatu" \
+			7 "Py3VENV sortu" \
+			8 "APP-a instalatu" \
+			9 "APP-a bistaratu" \
+			10 "Apache log-ak" \
+			11 "SSH log-ak" \
+			12 "Irten" \
+			2>&1 1>&3)"
+	
+		case $aukera in
+			0) desinstalatuDena;;
+			1) apacheInstalatu;;
+			2) apacheTestatu;;
+			3) virtualHostSortu;;
+			4) virtualHostaTestatu;;
+			5) phpInstalatu;;
+			6) phpTestatu;;
+			7) py3venvSortu;;
+			8) appaInstalatu;;
+			9) appaBistaratu;;
+			10) apacheLogak;;
+			11) sshLogak;;
+			12) irten;;
+			*) ;;
+		esac 
+	
+	done
+}
 
-	case $aukera in
-		0) desinstalatuDena;;
-		1) apacheInstalatu;;
-		2) apacheTestatu;;
-		3) virtualHostSortu;;
-		4) virtualHostaTestatu;;
-		5) phpInstalatu;;
-		6) phpTestatu;;
-		7) py3venvSortu;;
-		8) appaInstalatu;;
-		9) appaBistaratu;;
-		10) apacheLogak;;
-		11) sshLogak;;
-		12) irten;;
-		*) ;;
-	esac 
-
-done
+main
 
 exit 0
