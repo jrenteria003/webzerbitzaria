@@ -12,7 +12,7 @@ mezua=`echo $komandoa1$komandoa2`
 
 if [ -z  "$mezua" ];
 then
-	echo "Apache edo php ez daude instalatuta"
+	dialog --msgbox "Apache edo php ez daude instalatuta \n" 5 50
 else
 	sudo systemctl stop apache2.service
 	sudo apt-get remove apache2 -y
@@ -40,7 +40,7 @@ mezua=`echo $komandoa`
 
 if [ -n  "$mezua" ];
 then    
-	echo "apache jada instalatuta dago"
+	dialog --msgbox "apache jada instalatuta dago \n" 5 50
 else    
 	sudo apt-get install apache2 -y
 fi
@@ -62,9 +62,9 @@ komandoa3=`sudo systemctl status apache2.service | grep "Active"`
 mezua3=`echo $komandoa3`
 if [ -n  "$mezua3" ];
 then
-	echo "Apache web zerbitzaria martxan dago"
+	dialog --msgbox "Apache web zerbitzaria martxan dago \n" 5 50
 else
-	echo -e "Apache berbiarazten..."
+	dialog --msgbox "Apache berbiarazten... \n" 5 30
 	sudo systemctl restart apache2.service
 fi
 
@@ -72,9 +72,9 @@ komandoa4=`sudo netstat -anp | grep ":80.*apache2"`
 mezua4=`echo $komandoa4`
 if [ -n  "$mezua4" ];
 then
-	echo "Apache web zerbitzaria 80 portutik entzuten ari da"
+	dialog --msgbox "Apache web zerbitzaria 80 portutik entzuten ari da \n" 5 50
 else
-	echo "Apache web zerbitzaria EZ DAGO 80 portutik entzuten"
+	dialog --msgbox "Apache web zerbitzaria EZ DAGO 80 portutik entzuten \n" 5 50
 fi
 
 firefox http://127.0.0.1:80
@@ -98,9 +98,10 @@ komandoa4=`sudo netstat -anp | grep ":8080.*apache2"`
 mezua4=`echo $komandoa4`
 if [ -n  "$mezua4" ];
 then
-	echo "Apache web zerbitzaria 8080 portutik entzuten ari da"
+	dialog --msgbox "Apache web zerbitzaria 8080 portutik entzuten ari da \n" 5 50
 else
 	sudo sed -i 's|Listen 80|Listen 80\nListen 8080|' ports.conf
+	dialog --msgbox "Apache web zerbitzaria 8080 portutik entzuten ari da \n" 5 50
 fi
 cd /etc/apache2/sites-available
 sudo a2ensite erraztest.conf &> /dev/null
@@ -118,9 +119,9 @@ komandoa3=`sudo systemctl status apache2.service | grep "Active"`
 mezua3=`echo $komandoa3`
 if [ -n  "$mezua3" ];
 then
-	echo "Apache web zerbitzaria martxan dago"
+	dialog --msgbox "Apache web zerbitzaria martxan dago \n" 5 50
 else
-	echo -e "Apache berbiarazten..."
+	dialog --msgbox "Apache berbiarazten... \n" 5 30
 	sudo systemctl restart apache2.service
 fi
 
@@ -128,12 +129,12 @@ komandoa3=`sudo netstat -anp | grep ":8080.*apache"`
 mezua3=`echo $komandoa3`
 if [ -n  "$mezua3" ];
 then
-	echo "Apache web zerbitzaria 8080 portutik entzuten ari da"
+	dialog --msgbox "Apache web zerbitzaria 8080 portutik entzuten ari da \n" 5 50
 	cd /var/www/html
 	sudo cp /var/www/html/index.html erraztest
 	firefox http://127.0.0.1:8080
 else
-	echo "Apache web zerbitzaria EZ DAGO 8080 portutik entzuten"
+	dialog --msgbox "Apache web zerbitzaria EZ DAGO 8080 portutik entzuten \n" 5 50
 fi
 
 }
@@ -150,11 +151,11 @@ mezua=`echo $komandoa`
 
 if [ -n  "$mezua" ];
 then    
-	echo "php jada instalatuta dago"
+	dialog --msgbox "php jada instalatuta dago \n" 5 40
 else    
 	sudo apt-get install php -y
 	sudo apt-get install libapache2-mod-php -y
-	echo -e "Apache berbiarazten..."
+	dialog --msgbox "Apache berbiarazten... \n" 5 30
 	sudo systemctl restart apache2.service
 fi
 }
@@ -192,7 +193,7 @@ mezua=`echo $komandoa`
 
 if [ -n  "$mezua" ];
 then    
-	echo "virtualenv jada instalatuta dago"
+	dialog --msgbox "virtualenv jada instalatuta dago \n" 5 40
 else    
 	sudo apt-get install python-virtualenv virtualenv -y
 fi
@@ -218,7 +219,7 @@ mezua1=`echo $komandoa1$komandoa2`
 
 if [ -n  "$mezua1" ];
 then
-	echo "python3-pip eta dos2unix paketeak jada instalatuta daude"
+	dialog --msgbox "python3-pip eta dos2unix paketeak jada instalatuta daude \n" 5 60
 else
 	sudo apt-get install python3-pip -y
 	sudo apt-get install dos2unix -y
@@ -262,7 +263,7 @@ function apacheLogak()
 {
 echo "#################### apacheLogak funtzioa"
 cd /var/log/apache2
-tail -100 error.log
+dialog --textbox error.log 0 0
 }
 
 #################################################################
@@ -277,16 +278,16 @@ mezua=`echo $komandoa`
 
 if [ -n  "$mezua" ];
 then    
-	echo "ssh jada instalatuta dago"
+	dialog --msgbox "ssh jada instalatuta dago \n" 5 40
 else    
 	sudo aptitude install ssh
 fi
 
-echo "SSH bidezko konexio saiakerak azken hilabetean ondokoak izan dira:"
 cd /home/fitxategiak
 less /var/log/auth.log | grep 'lsi' > loginak.txt
 nf=`less /var/log/auth.log | grep 'lsi' | wc -l`
 i=1
+touch hamaika.txt
 while read line; do
 	
 	
@@ -296,13 +297,14 @@ while read line; do
 	baldintza=`echo $status | grep "Accepted"`
 	if [ -z $baldintza];
 	then
-		echo "Status: [failed]  Account name: $name Date: $data"
+		echo "Status: [failed]  Account name: $name Date: $data" >> hamaika.txt
 	else
-		echo "Status: [failed]  Account name: $name Date: $data"
+		echo "Status: [failed]  Account name: $name Date: $data" >> hamaika.txt
 	fi
 
 	i=$((i+1))
 done < loginak.txt
+dialog --textbox hamaika.txt 0 0
 }
 
 ###########################################################
