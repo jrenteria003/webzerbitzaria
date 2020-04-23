@@ -72,9 +72,9 @@ komandoa4=`sudo netstat -anp | grep ":80.*apache2"`
 mezua4=`echo $komandoa4`
 if [ -n  "$mezua4" ];
 then
-	dialog --msgbox "Apache web zerbitzaria 80 portutik entzuten ari da \n" 5 50
+	dialog --msgbox "Apache web zerbitzaria 80 portutik entzuten ari da \n" 5 70
 else
-	dialog --msgbox "Apache web zerbitzaria EZ DAGO 80 portutik entzuten \n" 5 50
+	dialog --msgbox "Apache web zerbitzaria EZ DAGO 80 portutik entzuten \n" 5 70
 fi
 
 firefox http://127.0.0.1:80
@@ -129,12 +129,12 @@ komandoa3=`sudo netstat -anp | grep ":8080.*apache"`
 mezua3=`echo $komandoa3`
 if [ -n  "$mezua3" ];
 then
-	dialog --msgbox "Apache web zerbitzaria 8080 portutik entzuten ari da \n" 5 50
+	dialog --msgbox "Apache web zerbitzaria 8080 portutik entzuten ari da \n" 5 70
 	cd /var/www/html
 	sudo cp /var/www/html/index.html erraztest
 	firefox http://127.0.0.1:8080
 else
-	dialog --msgbox "Apache web zerbitzaria EZ DAGO 8080 portutik entzuten \n" 5 50
+	dialog --msgbox "Apache web zerbitzaria EZ DAGO 8080 portutik entzuten \n" 5 70
 fi
 
 }
@@ -200,7 +200,7 @@ fi
 
 if [ -d "/var/www/html/erraztest/python3envmetrix" ];
 then    
-	echo "python3envmetrix jada existitzen da"
+	dialog --msgbox "python3envmetrix jada existitzen da \n" 5 50
 else    
 	sudo virtualenv python3envmetrix --python=python3
 fi
@@ -226,14 +226,15 @@ else
 fi
 
 #2
-komandoa=`sudo find -name rootcmd.sh`
-mezua=`echo $komandoa`
-sudo chmod +x /home/fitxategiak/rootcmd.sh
+#komandoa=`sudo find -name rootcmd.sh`
+#mezua=`echo $komandoa`
+cd $helbidea
+sudo chmod +x $helbidea/rootcmd.sh
 sudo ./rootcmd.sh
 
 
 #3
-cd /home/fitxategiak
+cd $helbidea
 sudo cp index.php /var/www/html/erraztest/
 sudo cp webprocess.sh /var/www/html/erraztest/
 sudo cp complejidadtextual.py /var/www/html/erraztest/
@@ -241,9 +242,12 @@ sudo cp english.doc.txt /var/www/html/erraztest
 
 
 #4
-cd /var/www/html/erraztest
 sudo chmod +x webprocess.sh
-sudo ./webprocess.sh english.doc.txt
+sudo chmod +x zortzi.sh
+sudo touch zortzi.sh
+sudo bash ./zortzi.sh
+dialog --textbox 8.txt 30 35
+sudo chown -R www-data:www-data /var/www
 }
 
 #############################################################
@@ -262,6 +266,7 @@ firefox http://127.0.0.1:8080/index.php
 function apacheLogak()
 {
 echo "#################### apacheLogak funtzioa"
+#sudo chmod +r -R /var/log/apache2
 cd /var/log/apache2
 dialog --textbox error.log 0 0
 }
@@ -283,13 +288,10 @@ else
 	sudo aptitude install ssh
 fi
 
-cd /home/fitxategiak
-less /var/log/auth.log | grep 'lsi' > loginak.txt
-nf=`less /var/log/auth.log | grep 'lsi' | wc -l`
-i=1
+cd $helbidea
+sudo less /var/log/auth.log | grep 'lsi' > loginak.txt
 touch hamaika.txt
 while read line; do
-	
 	
 	data=`echo "$line" loginak.txt | awk '{print $1,$2,$3}'`
 	name=`echo "$line" loginak.txt| awk '{print $4}'`
@@ -299,10 +301,8 @@ while read line; do
 	then
 		echo "Status: [failed]  Account name: $name Date: $data" >> hamaika.txt
 	else
-		echo "Status: [failed]  Account name: $name Date: $data" >> hamaika.txt
+		echo "Status: [accepted]  Account name: $name Date: $data" >> hamaika.txt
 	fi
-
-	i=$((i+1))
 done < loginak.txt
 dialog --textbox hamaika.txt 0 0
 }
@@ -314,6 +314,7 @@ dialog --textbox hamaika.txt 0 0
 function irten()
 {
 	dialog --msgbox "Agur\n:)" 6 12
+	dialog --msgbox "Mikel Idoyaga \n J. Renteria \n Adrian Sanchez \n Asier Rosa \n" 8 30
 }
 
 
@@ -324,6 +325,18 @@ function irten()
 # hasieraketa balioa
 function main()
 {
+	dialogdago='sudo dpkg -l | grep -w " dialog "'
+	mezua='echo $dialogdago'
+
+	helbidea=$(pwd)
+	
+	sudo apt update
+
+	if [ -z  "$mezua" ];
+	then
+		sudo apt install dialog
+	fi
+
 	exec 3>&1
 
 	aukera=13
